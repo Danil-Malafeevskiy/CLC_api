@@ -5,11 +5,14 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic
 
 from ..db import async_session
 
+security = HTTPBasic()
+
 class Context:
     session: AsyncSession
     session_finished: bool
 
     def __init__(self,
+                 credentials: Optional[HTTPAuthorizationCredentials],
                  request: Optional[Request],
                  response: Optional[Response]):
 
@@ -38,7 +41,8 @@ class Context:
         self.is_finished = True
 
 
-async def get_context(request: Request = None,
+async def get_context(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+                      request: Request = None,
                       response: Response = None):
-    async with Context(request, response) as context:
+    async with Context(credentials, request, response) as context:
         yield context
