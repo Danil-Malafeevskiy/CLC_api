@@ -8,7 +8,7 @@ from .api.endpoints.staff import router as staff_route
 from .api.endpoints.lesson import router as lesson_route
 from .api.endpoints.parent import router as parent_route
 from .api.endpoints.Child import router as child_route
-#from .api.endpoints.record import router as record_router
+from .api.endpoints.record import router as record_router
 
 
 app = FastAPI()
@@ -25,4 +25,4 @@ app.include_router(staff_route)
 app.include_router(lesson_route)
 app.include_router(parent_route)
 app.include_router(child_route)
-#app.include_router(record_router)
+app.include_router(record_router)
