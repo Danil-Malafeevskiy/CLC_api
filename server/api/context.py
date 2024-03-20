@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import Request, Response, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBasic
+from fastapi.security import HTTPBasicCredentials, HTTPBasic
 
 from ..db import async_session
 
@@ -12,7 +12,7 @@ class Context:
     session_finished: bool
 
     def __init__(self,
-                 credentials: Optional[HTTPAuthorizationCredentials],
+                 credentials: Optional[HTTPBasicCredentials],
                  request: Optional[Request],
                  response: Optional[Response]):
 
@@ -41,7 +41,7 @@ class Context:
         self.is_finished = True
 
 
-async def get_context(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+async def get_context(credentials: Optional[HTTPBasicCredentials] = Depends(security),
                       request: Request = None,
                       response: Response = None):
     async with Context(credentials, request, response) as context:
