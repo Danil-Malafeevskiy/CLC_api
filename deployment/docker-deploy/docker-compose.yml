@@ -1,0 +1,49 @@
+version: '3.9'
+
+# This is demo docker-compose file.
+# To deploy copy files: `.env.demo` => `.env.local`, `demo-docker-compose.yml` => `docker-compose.yml`
+# and make changes suitable for your setup.
+
+services:
+  clc:
+    container_name: clc
+    build:
+      context: ../../
+    image: "clc:1.0"
+    environment:
+      PG_HOST: "CLC-pg"
+      PG_PORT: "${POSTGRES_PORT}"
+      PG_USER: "${POSTGRES_USER}"
+      PG_PASSWORD: "${POSTGRES_PASSWORD}"
+      PG_DB: "${POSTGRES_DB}"
+      LOG_LEVEL: debug
+      DEBUG: "true"
+      ORIGINS: http://127.0.0.1:8095,http://localhost:8095
+      BASE_URL: ""
+      # If True, authorization, authentication and identification are disabled. Everybody are `admin` user.
+      ENABLE_SQLALCHEMY_LOGGING: "True"
+    ports:
+      - "8095:80"
+    depends_on:
+      - clc-pg
+    volumes:
+      - ../../server:/server:z
+
+  clc-pg:
+    container_name: clc-pg
+    image: "postgres"
+    ports:
+      - "${POSTGRES_OUTER_PORT}:${POSTGRES_PORT}"
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    command: ["postgres", "-p", "${POSTGRES_PORT}", "-c", "log_statement=all", "-c", "max_connections=250", "-c", "max_wal_size=2GB"]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U postgres" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data:z
