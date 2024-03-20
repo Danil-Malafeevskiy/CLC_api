@@ -13,7 +13,7 @@ logger = logging.getLogger("uvicorn")
 router = APIRouter()
 
 
-@router.post(path="/staff/create", tags=["Staff"], name="Staff.post")
+@router.post(path="/staff/create", tags=["Staff"], name="Staff.create")
 async def create_staff(
         position: str = Body(..., alice="position"),
         salary: float = Body(..., alias="salary"),

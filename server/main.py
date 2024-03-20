@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .settings import ORIGINS
 
-from .api.endpoints.staff import router
+from .api.endpoints.staff import router as staff_route
+from .api.endpoints.lesson import router as lesson_route
 
 app = FastAPI()
 
@@ -14,4 +15,5 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-app.include_router(router)
+app.include_router(staff_route)
+app.include_router(lesson_route)
