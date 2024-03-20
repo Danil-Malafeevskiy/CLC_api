@@ -68,7 +68,7 @@ class ChildService:
     @classmethod
     async def list_child(cls,
                          context: Context) -> List[ChildResponse]:
-        query = select(Child, Parent.name)
+        query = select(Child, Parent.name).join(Parent, Parent.id == Child.parent_id)
         objects = (await context.session.execute(query))
 
         return [

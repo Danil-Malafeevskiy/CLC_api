@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 @router.post(path="/child/create", tags=["Child"], name="Child.create")
-async def create_parent(
+async def create_child(
         item: ChildCreateRequest = Body(...),
         context: Context = Depends(get_context)) -> ChildResponse:
 
@@ -36,7 +36,7 @@ async def create_parent(
 
 
 @router.post(path="/child/get", tags=["Child"], name="Child.get")
-async def get_parent(
+async def get_child(
         id_: int = Body(..., description="Identity Child", alias="id"),
         context: Context = Depends(get_context)) -> ChildResponse:
 
@@ -49,7 +49,7 @@ async def get_parent(
 
 
 @router.post(path="/child/list", tags=["Child"], name="Child.list")
-async def list_parent(
+async def list_child(
         context: Context = Depends(get_context)) -> List[ChildResponse]:
 
     child_response = await ChildService.list_child(
@@ -60,7 +60,7 @@ async def list_parent(
 
 
 @router.post(path="/child/update", tags=["Child"], name="Child.update")
-async def update_parent(
+async def update_child(
         id_: int = Body(..., description="Identity Child", alias="id"),
         item: ChildUpdateRequest = Body(...),
         context: Context = Depends(get_context)) -> Dict:
@@ -84,7 +84,7 @@ async def update_parent(
 
 
 @router.post(path="/child/remove", tags=["Child"], name="Child.remove")
-async def remove_parent(
+async def remove_child(
         id_: int = Body(..., description="Identity Child", alias="id"),
         context: Context = Depends(get_context)) -> Dict:
 
