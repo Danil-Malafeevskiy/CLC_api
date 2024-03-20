@@ -1,6 +1,6 @@
 import os
 
-ORIGINS = os.environ.get("ORIGINS", "http://127.0.0.1:300,http://localhost:300").split(
+ORIGINS = os.environ.get("ORIGINS", "http://127.0.0.1:3000,http://localhost:3000").split(
     ","
 )
 
