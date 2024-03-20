@@ -18,7 +18,7 @@ services:
       PG_DB: "${POSTGRES_DB}"
       LOG_LEVEL: debug
       DEBUG: "true"
-      ORIGINS: http://127.0.0.1:8095,http://localhost:8095
+      ORIGINS: http://127.0.0.1:3000,http://localhost:3000
       BASE_URL: ""
       # If True, authorization, authentication and identification are disabled. Everybody are `admin` user.
       ENABLE_SQLALCHEMY_LOGGING: "True"
