@@ -1,7 +1,12 @@
-from typing import Optional
+import logging
+from typing import Optional, List
 
 from pydantic import BaseModel, Field
 
+from server.db.models.child import Child
+from server.db.models.parent import Parent
+
+logger = logging.getLogger("uvicorn")
 
 class ChildResponse(BaseModel):
     id: int
@@ -32,3 +37,33 @@ class ChildUpdateRequest(BaseModel):
     age: Optional[int] = None
     gender: Optional[str] = None
     parent_id: Optional[int] = Field(None, alias="parentId")
+
+
+class ChildListFilter(BaseModel):
+    parent_ids: Optional[List[int]] = Field(None, alias="parentIds")
+    gender: Optional[str]
+    age: Optional[int]
+
+    def apply_to_query(self, query):
+        if self.parent_ids:
+            query = query.where(Child.parent_id.in_(self.parent_ids))
+
+        if self.age:
+            query = query.where(Child.age == self.age)
+
+        if self.gender:
+            query = query.where(Child.gender == self.gender)
+
+        return query
+
+
+class ChildListNavigation(BaseModel):
+    offset: Optional[int] = None
+    limit: Optional[int] = None
+
+    def apply_to_query(self, query):
+        if self.offset is not None:
+            query = query.offset(self.offset)
+        if self.limit is not None:
+            query = query.limit(self.limit)
+        return query

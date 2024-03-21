@@ -5,7 +5,7 @@ from fastapi import Depends, APIRouter, Body
 from starlette.status import HTTP_204_NO_CONTENT
 
 from ..context import Context, get_context
-from ..models.Child import ChildResponse, ChildCreateRequest, ChildUpdateRequest
+from ..models.Child import ChildResponse, ChildCreateRequest, ChildUpdateRequest, ChildListFilter, ChildListNavigation
 from ..services.Child import ChildService
 
 logger = logging.getLogger("uvicorn")
@@ -50,9 +50,13 @@ async def get_child(
 
 @router.post(path="/child/list", tags=["Child"], name="Child.list")
 async def list_child(
+        filter_: ChildListFilter = Body(..., alias="filter"),
+        navigation: ChildListNavigation = Body(...),
         context: Context = Depends(get_context)) -> List[ChildResponse]:
 
     child_response = await ChildService.list_child(
+        filter_,
+        navigation,
         context
     )
 

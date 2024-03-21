@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from sqlalchemy import select, delete
 
-from ..models.Child import ChildResponse
+from ..models.Child import ChildResponse, ChildListFilter, ChildListNavigation
 from ...api.context import Context
 from ...db.models.child import Child
 from ...db.models.parent import Parent
@@ -67,10 +67,15 @@ class ChildService:
 
     @classmethod
     async def list_child(cls,
+                         filter_: ChildListFilter,
+                         navigation: ChildListNavigation,
                          context: Context) -> List[ChildResponse]:
         query = select(Child, Parent.name).join(Parent, Parent.id == Child.parent_id)
-        objects = (await context.session.execute(query))
 
+        query = filter_.apply_to_query(query)
+        query = navigation.apply_to_query(query)
+
+        objects = (await context.session.execute(query))
         return [
             ChildResponse(
                 id=obj.id,
