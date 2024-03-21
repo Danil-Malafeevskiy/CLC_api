@@ -4,7 +4,6 @@ from typing import Optional, List
 from pydantic import BaseModel, Field
 
 from server.db.models.child import Child
-from server.db.models.parent import Parent
 
 logger = logging.getLogger("uvicorn")
 
@@ -54,16 +53,4 @@ class ChildListFilter(BaseModel):
         if self.gender:
             query = query.where(Child.gender == self.gender)
 
-        return query
-
-
-class ChildListNavigation(BaseModel):
-    offset: Optional[int] = None
-    limit: Optional[int] = None
-
-    def apply_to_query(self, query):
-        if self.offset is not None:
-            query = query.offset(self.offset)
-        if self.limit is not None:
-            query = query.limit(self.limit)
         return query

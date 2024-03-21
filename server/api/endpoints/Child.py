@@ -4,8 +4,9 @@ from typing import List, Optional, Dict
 from fastapi import Depends, APIRouter, Body
 from starlette.status import HTTP_204_NO_CONTENT
 
+from ..base_models import BaseListNavigation
 from ..context import Context, get_context
-from ..models.Child import ChildResponse, ChildCreateRequest, ChildUpdateRequest, ChildListFilter, ChildListNavigation
+from ..models.Child import ChildResponse, ChildCreateRequest, ChildUpdateRequest, ChildListFilter
 from ..services.Child import ChildService
 
 logger = logging.getLogger("uvicorn")
@@ -51,7 +52,7 @@ async def get_child(
 @router.post(path="/child/list", tags=["Child"], name="Child.list")
 async def list_child(
         filter_: ChildListFilter = Body(..., alias="filter"),
-        navigation: ChildListNavigation = Body(...),
+        navigation: BaseListNavigation = Body(...),
         context: Context = Depends(get_context)) -> List[ChildResponse]:
 
     child_response = await ChildService.list_child(
