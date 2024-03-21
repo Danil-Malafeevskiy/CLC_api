@@ -1,7 +1,9 @@
 from datetime import datetime, time
-from typing import Optional
+from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from server.db.models.lesson import Lesson
 
 
 class LessonResponse(BaseModel):
@@ -13,3 +15,21 @@ class LessonResponse(BaseModel):
     age: int
     staff_id: int
     staff_position: Optional[str]
+
+
+class LessonListFilter(BaseModel):
+    staff_ids: Optional[List[int]] = Field(None, alias="staffIds")
+    price: Optional[int]
+    age: Optional[int]
+
+    def apply_to_query(self, query):
+        if self.staff_ids:
+            query = query.where(Lesson.staff_id.in_(self.staff_ids))
+
+        if self.age:
+            query = query.where(Lesson.age == self.age)
+
+        if self.price:
+            query = query.where(Lesson.price == self.price)
+
+        return query

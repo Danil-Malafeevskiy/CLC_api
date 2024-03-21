@@ -3,7 +3,8 @@ from typing import List, Optional
 
 from sqlalchemy import select, delete
 
-from ..models.record import RecordResponse
+from ..base_models import BaseListNavigation
+from ..models.record import RecordResponse, RecordListFilter
 from ...api.context import Context
 from ...db.models.child import Child
 from ...db.models.lesson import Lesson
@@ -59,12 +60,19 @@ class RecordService:
 
     @classmethod
     async def list_record(cls,
+                          filter_: RecordListFilter,
+                          navigation: BaseListNavigation,
                           context: Context) -> List[RecordResponse]:
         query = ((select(Record, Parent.name, Lesson.date_lesson, Child.name)
                  .join(Parent, Parent.id == Record.parent_id))
                  .join(Child, Child.id == Record.child_id)
                  .join(Lesson, Lesson.id == Record.lesson_id)
         )
+
+        query = filter_.apply_to_query(query)
+        query = navigation.apply_to_query(query)
+
+
         objects = (await context.session.execute(query))
 
         return [

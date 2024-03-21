@@ -4,8 +4,9 @@ from typing import List, Optional, Dict
 from fastapi import Depends, APIRouter, Body
 from starlette.status import HTTP_204_NO_CONTENT
 
+from ..base_models import BaseListNavigation
 from ..context import Context, get_context
-from ..models.lesson import LessonResponse
+from ..models.lesson import LessonResponse, LessonListFilter
 from ..services.lesson import LessonService
 
 logger = logging.getLogger("uvicorn")
@@ -54,9 +55,13 @@ async def get_lesson(
 
 @router.post(path="/lesson/list", tags=["Lesson"], name="Lesson.list")
 async def list_lesson(
+        filter_: LessonListFilter = Body(..., alias="filter"),
+        navigation: BaseListNavigation = Body(...),
         context: Context = Depends(get_context)) -> List[LessonResponse]:
 
     lesson_response = await LessonService.list_lesson(
+        filter_,
+        navigation,
         context
     )
 

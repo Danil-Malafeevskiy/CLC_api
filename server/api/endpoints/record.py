@@ -4,8 +4,9 @@ from typing import List, Optional, Dict
 from fastapi import Depends, APIRouter, Body
 from starlette.status import HTTP_204_NO_CONTENT
 
+from ..base_models import BaseListNavigation
 from ..context import Context, get_context
-from ..models.record import RecordResponse, RecordCreateRequest, RecordUpdateRequest
+from ..models.record import RecordResponse, RecordCreateRequest, RecordUpdateRequest, RecordListFilter
 from ..services.record import RecordService
 
 logger = logging.getLogger("uvicorn")
@@ -46,9 +47,13 @@ async def get_record(
 
 @router.post(path="/record/list", tags=["Record"], name="Record.list")
 async def list_record(
+        filter_: RecordListFilter = Body(..., alias="filter"),
+        navigation: BaseListNavigation = Body(...),
         context: Context = Depends(get_context)) -> List[RecordResponse]:
 
     record_response = await RecordService.list_record(
+        filter_,
+        navigation,
         context
     )
 

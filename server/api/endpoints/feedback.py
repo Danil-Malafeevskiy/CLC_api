@@ -4,8 +4,9 @@ from typing import List, Optional, Dict
 from fastapi import Depends, APIRouter, Body
 from starlette.status import HTTP_204_NO_CONTENT
 
+from ..base_models import BaseListNavigation
 from ..context import Context, get_context
-from ..models.feedback import FeedbackResponse, FeedbackCreateRequest, FeedbackUpdateRequest
+from ..models.feedback import FeedbackResponse, FeedbackCreateRequest, FeedbackUpdateRequest, FeedbackListFilter
 from ..services.feedback import FeedbackService
 
 logger = logging.getLogger("uvicorn")
@@ -46,9 +47,13 @@ async def get_feedback(
 
 @router.post(path="/feedback/list", tags=["Feedback"], name="Feedback.list")
 async def list_feedback(
+        filter_: FeedbackListFilter = Body(..., alias="filter"),
+        navigation: BaseListNavigation = Body(...),
         context: Context = Depends(get_context)) -> List[FeedbackResponse]:
 
     feedback_response = await FeedbackService.list_feedback(
+        filter_,
+        navigation,
         context
     )
 

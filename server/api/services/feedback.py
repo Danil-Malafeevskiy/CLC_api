@@ -3,7 +3,8 @@ from typing import List, Optional
 
 from sqlalchemy import select, delete
 
-from ..models.feedback import FeedbackResponse
+from ..base_models import BaseListNavigation
+from ..models.feedback import FeedbackResponse, FeedbackListFilter
 from ...api.context import Context
 from ...db.models.child import Child
 from ...db.models.feedback import Feedback
@@ -57,11 +58,17 @@ class FeedbackService:
 
     @classmethod
     async def list_feedback(cls,
+                            filter_: FeedbackListFilter,
+                            navigation: BaseListNavigation,
                             context: Context) -> List[FeedbackResponse]:
         query = ((select(Feedback, Parent.name, Lesson.date_lesson)
                   .join(Parent, Parent.id == Feedback.parent_id))
                  .join(Lesson, Lesson.id == Feedback.lesson_id)
                  )
+
+        query = filter_.apply_to_query(query)
+        query = navigation.apply_to_query(query)
+
         objects = (await context.session.execute(query))
 
         return [

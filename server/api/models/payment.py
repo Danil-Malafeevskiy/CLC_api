@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, Field
+
+from server.db.models.payment import Payment
 
 
 class PaymentResponse(BaseModel):
@@ -26,3 +28,21 @@ class PaymentUpdateRequest(BaseModel):
     amount: Optional[float]
     parent_id: Optional[int] = Field(None, alias="parentId")
     lesson_id: Optional[int] = Field(None, alias="lessonId")
+
+
+class PaymentListFilter(BaseModel):
+    parent_ids: Optional[List[int]] = Field(None, alias="parentIds")
+    lesson_ids: Optional[List[int]] = Field(None, alias="lessonIds")
+    method: Optional[str]
+
+    def apply_to_query(self, query):
+        if self.parent_ids:
+            query = query.where(Payment.parent_id.in_(self.parent_ids))
+
+        if self.lesson_ids:
+            query = query.where(Payment.lesson_id.in_(self.lesson_ids))
+
+        if self.method:
+            query = query.where(Payment.method == self.method)
+
+        return query

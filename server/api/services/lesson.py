@@ -6,7 +6,8 @@ from typing import List, Optional
 from sqlalchemy import delete, select
 from sqlalchemy.orm import aliased
 
-from ..models.lesson import LessonResponse
+from ..base_models import BaseListNavigation
+from ..models.lesson import LessonResponse, LessonListFilter
 from ...api.context import Context
 from ...db.models.lesson import Lesson
 from ...db.models.staff import Staff
@@ -66,8 +67,14 @@ class LessonService:
 
     @classmethod
     async def list_lesson(cls,
+                          filter_: LessonListFilter,
+                          navigation: BaseListNavigation,
                           context: Context) -> List[LessonResponse]:
         query = select(Lesson, Staff.position).join(Staff, Staff.id == Lesson.staff_id)
+
+        query = filter_.apply_to_query(query)
+        query = navigation.apply_to_query(query)
+
         objects = (await context.session.execute(query))
 
         return [

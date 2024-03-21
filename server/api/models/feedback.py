@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, Field
+
+from server.db.models.feedback import Feedback
 
 
 class FeedbackResponse(BaseModel):
@@ -21,3 +23,17 @@ class FeedbackUpdateRequest(BaseModel):
     text: Optional[str]
     parent_id: Optional[int] = Field(None, alias="parentId")
     lesson_id: Optional[int] = Field(None, alias="lessonId")
+
+
+class FeedbackListFilter(BaseModel):
+    parent_ids: Optional[List[int]] = Field(None, alias="parentIds")
+    lesson_ids: Optional[List[int]] = Field(None, alias="lessonIds")
+
+    def apply_to_query(self, query):
+        if self.parent_ids:
+            query = query.where(Feedback.parent_id.in_(self.parent_ids))
+
+        if self.lesson_ids:
+            query = query.where(Feedback.lesson_id.in_(self.lesson_ids))
+
+        return query

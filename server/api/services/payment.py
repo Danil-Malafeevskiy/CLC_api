@@ -3,7 +3,8 @@ from typing import List, Optional
 
 from sqlalchemy import select, delete
 
-from ..models.payment import PaymentResponse
+from ..base_models import BaseListNavigation
+from ..models.payment import PaymentResponse, PaymentListFilter
 from ...api.context import Context
 from ...db.models.payment import Payment
 from ...db.models.lesson import Lesson
@@ -60,11 +61,17 @@ class PaymentService:
 
     @classmethod
     async def list_payment(cls,
+                           filter_: PaymentListFilter,
+                           navigation: BaseListNavigation,
                            context: Context) -> List[PaymentResponse]:
         query = ((select(Payment, Parent.name, Lesson.date_lesson)
                   .join(Parent, Parent.id == Payment.parent_id))
                  .join(Lesson, Lesson.id == Payment.lesson_id)
                  )
+
+        query = filter_.apply_to_query(query)
+        query = navigation.apply_to_query(query)
+
         objects = (await context.session.execute(query))
 
         return [

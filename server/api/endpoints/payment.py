@@ -4,8 +4,9 @@ from typing import List, Optional, Dict
 from fastapi import Depends, APIRouter, Body
 from starlette.status import HTTP_204_NO_CONTENT
 
+from ..base_models import BaseListNavigation
 from ..context import Context, get_context
-from ..models.payment import PaymentResponse, PaymentCreateRequest, PaymentUpdateRequest
+from ..models.payment import PaymentResponse, PaymentCreateRequest, PaymentUpdateRequest, PaymentListFilter
 from ..services.payment import PaymentService
 
 logger = logging.getLogger("uvicorn")
@@ -47,9 +48,13 @@ async def get_payment(
 
 @router.post(path="/payment/list", tags=["Payment"], name="Payment.list")
 async def list_payment(
+        filter_: PaymentListFilter = Body(..., alias="filter"),
+        navigation: BaseListNavigation = Body(...),
         context: Context = Depends(get_context)) -> List[PaymentResponse]:
 
     payment_response = await PaymentService.list_payment(
+        filter_,
+        navigation,
         context
     )
 
