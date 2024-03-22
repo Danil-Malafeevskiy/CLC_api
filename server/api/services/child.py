@@ -4,10 +4,10 @@ from typing import List, Optional
 from sqlalchemy import select, delete
 
 from ..base_models import BaseListNavigation
-from ..models.Child import ChildResponse, ChildListFilter
+from ..models.child import ChildResponse, ChildListFilter
 from ...api.context import Context
 from ...db.models.child import Child
-from ...db.models.parent import Parent
+from ...db.models.user import User
 
 logger = logging.getLogger("uvicorn")
 
@@ -51,7 +51,7 @@ class ChildService:
     async def get_child(cls,
                         id_: int,
                         context: Context) -> ChildResponse:
-        query = select(Child, Parent.name).where(Child.id == id_).join(Parent, Parent.id == Child.parent_id)
+        query = select(Child, User.name).where(Child.id == id_).join(User, User.id == Child.parent_id)
         obj, parent = (await context.session.execute(query)).first()
 
         return ChildResponse(
@@ -71,7 +71,7 @@ class ChildService:
                          filter_: ChildListFilter,
                          navigation: BaseListNavigation,
                          context: Context) -> List[ChildResponse]:
-        query = select(Child, Parent.name).join(Parent, Parent.id == Child.parent_id)
+        query = select(Child, User.name).join(User, User.id == Child.parent_id)
 
         query = filter_.apply_to_query(query)
         query = navigation.apply_to_query(query)

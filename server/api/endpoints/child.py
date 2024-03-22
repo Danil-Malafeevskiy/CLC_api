@@ -6,8 +6,8 @@ from starlette.status import HTTP_204_NO_CONTENT
 
 from ..base_models import BaseListNavigation
 from ..context import Context, get_context
-from ..models.Child import ChildResponse, ChildCreateRequest, ChildUpdateRequest, ChildListFilter
-from ..services.Child import ChildService
+from ..models.child import ChildResponse, ChildCreateRequest, ChildUpdateRequest, ChildListFilter
+from ..services.child import ChildService
 
 logger = logging.getLogger("uvicorn")
 

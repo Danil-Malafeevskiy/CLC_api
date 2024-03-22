@@ -12,6 +12,7 @@ class RecordResponse(BaseModel):
     child_id: int = Field(alias="childId")
     lesson_id: int = Field(alias="lessonId")
     lesson_date: Optional[datetime] = Field(None, alias="lessonDate")
+    lesson_name: Optional[str] = Field(None, alias="lessonName")
     child_name: Optional[str] = Field(None, alias="childName")
     parent_name: Optional[str] = Field(None, alias="parentName")
 

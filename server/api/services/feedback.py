@@ -9,7 +9,7 @@ from ...api.context import Context
 from ...db.models.child import Child
 from ...db.models.feedback import Feedback
 from ...db.models.lesson import Lesson
-from ...db.models.parent import Parent
+from ...db.models.user import User
 
 logger = logging.getLogger("uvicorn")
 
@@ -41,8 +41,8 @@ class FeedbackService:
     async def get_feedback(cls,
                            id_: int,
                            context: Context) -> FeedbackResponse:
-        query = ((select(Feedback, Parent.name, Lesson.date_lesson).where(Feedback.id == id_)
-                 .join(Parent, Parent.id == Feedback.parent_id))
+        query = ((select(Feedback, User.name, Lesson.date_lesson).where(Feedback.id == id_)
+                 .join(User, User.id == Feedback.parent_id))
                  .join(Lesson, Lesson.id == Feedback.lesson_id)
                  )
         obj, parent_name, lesson_date = (await context.session.execute(query)).first()
@@ -61,8 +61,8 @@ class FeedbackService:
                             filter_: FeedbackListFilter,
                             navigation: BaseListNavigation,
                             context: Context) -> List[FeedbackResponse]:
-        query = ((select(Feedback, Parent.name, Lesson.date_lesson)
-                  .join(Parent, Parent.id == Feedback.parent_id))
+        query = ((select(Feedback, User.name, Lesson.date_lesson)
+                  .join(User, User.id == Feedback.parent_id))
                  .join(Lesson, Lesson.id == Feedback.lesson_id)
                  )
 

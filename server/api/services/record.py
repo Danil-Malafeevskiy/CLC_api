@@ -9,7 +9,7 @@ from ...api.context import Context
 from ...db.models.child import Child
 from ...db.models.lesson import Lesson
 from ...db.models.record import Record
-from ...db.models.parent import Parent
+from ...db.models.user import User
 
 logger = logging.getLogger("uvicorn")
 
@@ -41,8 +41,8 @@ class RecordService:
     async def get_record(cls,
                          id_: int,
                          context: Context) -> RecordResponse:
-        query = ((select(Record, Parent.name, Lesson.date_lesson, Child.name).where(Record.id == id_)
-                 .join(Parent, Parent.id == Record.parent_id))
+        query = ((select(Record, User.name, Lesson.date_lesson, Child.name).where(Record.id == id_)
+                 .join(User, User.id == Record.parent_id))
                  .join(Child, Child.id == Record.child_id)
                  .join(Lesson, Lesson.id == Record.lesson_id)
         )
@@ -63,8 +63,8 @@ class RecordService:
                           filter_: RecordListFilter,
                           navigation: BaseListNavigation,
                           context: Context) -> List[RecordResponse]:
-        query = ((select(Record, Parent.name, Lesson.date_lesson, Child.name)
-                 .join(Parent, Parent.id == Record.parent_id))
+        query = ((select(Record, User.name, Lesson.date_lesson, Lesson.name, Child.name)
+                 .join(User, User.id == Record.parent_id))
                  .join(Child, Child.id == Record.child_id)
                  .join(Lesson, Lesson.id == Record.lesson_id)
         )
@@ -82,9 +82,10 @@ class RecordService:
                 childId=obj.child_id,
                 lessonId=obj.lesson_id,
                 lessonDate=lesson_date,
+                lessonName=lesson_name,
                 childName=child_name,
                 parentName=parent_name
-            ) for obj, parent_name, lesson_date, child_name in objects
+            ) for obj, parent_name, lesson_date, lesson_name, child_name in objects
         ]
 
     @classmethod

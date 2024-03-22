@@ -8,7 +8,7 @@ from ..models.payment import PaymentResponse, PaymentListFilter
 from ...api.context import Context
 from ...db.models.payment import Payment
 from ...db.models.lesson import Lesson
-from ...db.models.parent import Parent
+from ...db.models.user import User
 
 logger = logging.getLogger("uvicorn")
 
@@ -43,8 +43,8 @@ class PaymentService:
     async def get_payment(cls,
                           id_: int,
                           context: Context) -> PaymentResponse:
-        query = ((select(Payment, Parent.name, Lesson.date_lesson).where(Payment.id == id_)
-                  .join(Parent, Parent.id == Payment.parent_id))
+        query = ((select(Payment, User.name, Lesson.date_lesson).where(Payment.id == id_)
+                  .join(User, User.id == Payment.parent_id))
                  .join(Lesson, Lesson.id == Payment.lesson_id)
                  )
         obj, parent_name, lesson_date = (await context.session.execute(query)).first()
@@ -64,8 +64,8 @@ class PaymentService:
                            filter_: PaymentListFilter,
                            navigation: BaseListNavigation,
                            context: Context) -> List[PaymentResponse]:
-        query = ((select(Payment, Parent.name, Lesson.date_lesson)
-                  .join(Parent, Parent.id == Payment.parent_id))
+        query = ((select(Payment, User.name, Lesson.date_lesson)
+                  .join(User, User.id == Payment.parent_id))
                  .join(Lesson, Lesson.id == Payment.lesson_id)
                  )
 
