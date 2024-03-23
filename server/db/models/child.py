@@ -20,5 +20,5 @@ class Child(Base):
     age = Column(SmallInteger, nullable=False)
     gender = Column(String, nullable=False)
     parent_id = Column(
-        "parent_id", Integer, ForeignKey("parent.id"), nullable=False
+        "parent_id", Integer, ForeignKey("users.id"), nullable=False
     )

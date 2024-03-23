@@ -52,7 +52,7 @@ class ChildService:
                         id_: int,
                         context: Context) -> ChildResponse:
         query = select(Child, User.name).where(Child.id == id_).join(User, User.id == Child.parent_id)
-        obj, parent = (await context.session.execute(query)).first()
+        obj, parent_name = (await context.session.execute(query)).first()
 
         return ChildResponse(
             id=obj.id,
@@ -63,7 +63,7 @@ class ChildService:
             age=obj.age,
             gender=obj.gender,
             parentId=obj.parent_id,
-            parentName=parent.name
+            parentName=parent_name
         )
 
     @classmethod

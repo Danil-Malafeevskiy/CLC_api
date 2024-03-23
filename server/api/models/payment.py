@@ -24,8 +24,8 @@ class PaymentCreateRequest(BaseModel):
 
 
 class PaymentUpdateRequest(BaseModel):
-    method: Optional[str]
-    amount: Optional[float]
+    method: Optional[str] = None
+    amount: Optional[float] = None
     parent_id: Optional[int] = Field(None, alias="parentId")
     lesson_id: Optional[int] = Field(None, alias="lessonId")
 
@@ -33,7 +33,7 @@ class PaymentUpdateRequest(BaseModel):
 class PaymentListFilter(BaseModel):
     parent_ids: Optional[List[int]] = Field(None, alias="parentIds")
     lesson_ids: Optional[List[int]] = Field(None, alias="lessonIds")
-    method: Optional[str]
+    method: Optional[str] = None
 
     def apply_to_query(self, query):
         if self.parent_ids:

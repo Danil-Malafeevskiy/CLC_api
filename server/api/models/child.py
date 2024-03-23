@@ -40,8 +40,8 @@ class ChildUpdateRequest(BaseModel):
 
 class ChildListFilter(BaseModel):
     parent_ids: Optional[List[int]] = Field(None, alias="parentIds")
-    gender: Optional[str]
-    age: Optional[int]
+    gender: Optional[str] = None
+    age: Optional[int] = None
 
     def apply_to_query(self, query):
         if self.parent_ids:

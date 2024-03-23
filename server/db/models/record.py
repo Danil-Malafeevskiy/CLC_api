@@ -14,7 +14,7 @@ class Record(Base):
 
     id = Column(SmallInteger, primary_key=True)
     parent_id = Column(
-        "parent_id", Integer, ForeignKey("parent.id"), nullable=False
+        "parent_id", Integer, ForeignKey("users.id"), nullable=False
     )
     child_id = Column(
         "child_id", Integer, ForeignKey("child.id"), nullable=False

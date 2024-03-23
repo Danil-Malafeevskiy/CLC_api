@@ -16,7 +16,7 @@ class Payment(Base):
     method = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
     parent_id = Column(
-        "parent_id", Integer, ForeignKey("parent.id"), nullable=False
+        "parent_id", Integer, ForeignKey("users.id"), nullable=False
     )
     lesson_id = Column(
         "lesson_id", Integer, ForeignKey("lesson.id"), nullable=False

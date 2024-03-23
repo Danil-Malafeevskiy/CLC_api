@@ -32,7 +32,7 @@ class UserUpdateRequest(BaseModel):
     username: Optional[str] = None
     email: Optional[str] = None
     phone_number: Optional[str] = Field(None, alias="phoneNumber")
-    address: Optional[str]
+    address: Optional[str] = None
 
 
 class UserListFilter(BaseModel):

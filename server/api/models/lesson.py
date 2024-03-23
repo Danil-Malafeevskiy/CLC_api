@@ -14,13 +14,13 @@ class LessonResponse(BaseModel):
     price: float
     age: int
     staff_id: int
-    staff_position: Optional[str]
+    staff_position: Optional[str] = None
 
 
 class LessonListFilter(BaseModel):
     staff_ids: Optional[List[int]] = Field(None, alias="staffIds")
-    price: Optional[int]
-    age: Optional[int]
+    price: Optional[int] = None
+    age: Optional[int] = None
 
     def apply_to_query(self, query):
         if self.staff_ids:
