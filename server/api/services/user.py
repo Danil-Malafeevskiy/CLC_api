@@ -4,6 +4,7 @@ from typing import List, Optional
 from sqlalchemy import select, delete
 
 from passlib.context import CryptContext
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..base_models import BaseListNavigation
 from ..models.user import UserResponse, UserListFilter
@@ -26,7 +27,7 @@ class UserService:
                           phone_number: str,
                           address: str,
                           is_superuser: bool,
-                          context: Context) -> UserResponse:
+                          session: AsyncSession) -> UserResponse:
         obj = User(
             name=name,
             username=username,
@@ -37,8 +38,11 @@ class UserService:
             is_superuser=is_superuser
         )
 
-        context.session.add(instance=obj)
-        await context.session.flush([obj])
+        session.add(instance=obj)
+        await session.flush([obj])
+
+        await session.commit()
+        await session.close()
 
         return UserResponse(
             id=obj.id,

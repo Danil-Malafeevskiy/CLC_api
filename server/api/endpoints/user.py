@@ -8,6 +8,7 @@ from ..base_models import BaseListNavigation
 from ..context import Context, get_context
 from ..models.user import UserResponse, UserCreateRequest, UserUpdateRequest, UserListFilter
 from ..services.user import UserService
+from ...db import async_session
 
 logger = logging.getLogger("uvicorn")
 
@@ -16,8 +17,7 @@ router = APIRouter()
 
 @router.post(path="/user/create", tags=["User"], name="User.create")
 async def create_user(
-        item: UserCreateRequest = Body(...),
-        context: Context = Depends(get_context)) -> UserResponse:
+        item: UserCreateRequest = Body(...)) -> UserResponse:
 
     user_response = await UserService.create_user(
         item.name,
@@ -27,11 +27,8 @@ async def create_user(
         item.phone_number,
         item.address,
         item.is_superuser,
-        context
+        async_session()
     )
-
-    await context.session.commit()
-    context.commit()
 
     return user_response
 
