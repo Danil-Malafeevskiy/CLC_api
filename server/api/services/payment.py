@@ -20,12 +20,14 @@ class PaymentService:
                              amount: float,
                              parent_id: int,
                              lesson_id: int,
+                             record_id: int,
                              context: Context) -> PaymentResponse:
         obj = Payment(
             parent_id=parent_id,
             method=method,
             amount=amount,
-            lesson_id=lesson_id
+            lesson_id=lesson_id,
+            record_id=record_id
         )
 
         context.session.add(instance=obj)
@@ -36,7 +38,8 @@ class PaymentService:
             parentId=parent_id,
             method=method,
             amount=amount,
-            lessonId=lesson_id
+            lessonId=lesson_id,
+            recordId=obj.record_id
         )
 
     @classmethod
@@ -55,6 +58,7 @@ class PaymentService:
             amount=obj.amount,
             parentId=obj.parent_id,
             lessonId=obj.lesson_id,
+            recordId=obj.record_id,
             lessonDate=lesson_date,
             parentName=parent_name
         )
@@ -81,6 +85,7 @@ class PaymentService:
                 amount=obj.amount,
                 parentId=obj.parent_id,
                 lessonId=obj.lesson_id,
+                recordId=obj.record_id,
                 lessonDate=lesson_date,
                 parentName=parent_name
             ) for obj, parent_name, lesson_date in objects
@@ -100,6 +105,7 @@ class PaymentService:
                              amount: Optional[str],
                              parent_id: Optional[int],
                              lesson_id: Optional[int],
+                             record_id: Optional[int],
                              context: Context):
         query = select(Payment).where(Payment.id == id_)
         obj: Payment = (await context.session.execute(query)).scalars().first()
@@ -115,3 +121,6 @@ class PaymentService:
 
         if lesson_id:
             obj.lesson_id = lesson_id
+
+        if record_id:
+            obj.record_id = record_id

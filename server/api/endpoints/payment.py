@@ -24,6 +24,7 @@ async def create_payment(
         item.amount,
         item.parent_id,
         item.lesson_id,
+        item.record_id,
         context
     )
 
@@ -73,6 +74,7 @@ async def update_payment(
         item.amount,
         item.parent_id,
         item.lesson_id,
+        item.record_id,
         context
     )
 

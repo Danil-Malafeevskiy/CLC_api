@@ -21,3 +21,6 @@ class Payment(Base):
     lesson_id = Column(
         "lesson_id", Integer, ForeignKey("lesson.id"), nullable=False
     )
+    record_id = Column(
+        "record_id", Integer, ForeignKey("record.id"), nullable=False
+    )
