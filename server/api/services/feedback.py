@@ -79,6 +79,7 @@ class FeedbackService:
         )
 
         query = navigation.apply_to_query(query)
+        query = query.order_by(Feedback.id)
 
         objects = (await session.execute(query))
         count = (await session.execute(total_q)).scalars().first()
