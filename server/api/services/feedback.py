@@ -1,7 +1,7 @@
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, text, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..base_models import BaseListNavigation
@@ -25,7 +25,7 @@ class FeedbackService:
                               context: Context) -> FeedbackResponse:
         obj = Feedback(
             parent_id=parent_id,
-            raiting=raiting,
+            rating=raiting,
             text=text,
             lesson_id=lesson_id
         )
@@ -54,7 +54,7 @@ class FeedbackService:
         return FeedbackResponse(
             id=obj.id,
             text=obj.text,
-            raiting=obj.raiting,
+            raiting=obj.rating,
             parentId=obj.parent_id,
             lessonId=obj.lesson_id,
             lessonDate=lesson_date,
@@ -65,13 +65,16 @@ class FeedbackService:
     async def list_feedback(cls,
                             filter_: FeedbackListFilter,
                             navigation: BaseListNavigation,
-                            session: AsyncSession) -> List[FeedbackResponse]:
+                            session: AsyncSession) -> Tuple[List[FeedbackResponse], int]:
         query = ((select(Feedback, User.name, Lesson.date_lesson)
                   .join(User, User.id == Feedback.parent_id))
                  .join(Lesson, Lesson.id == Feedback.lesson_id)
                  )
 
         query = filter_.apply_to_query(query)
+
+        count = len((await session.execute(query)).all())
+
         query = navigation.apply_to_query(query)
 
         objects = (await session.execute(query))
@@ -83,13 +86,13 @@ class FeedbackService:
             FeedbackResponse(
                 id=obj.id,
                 text=obj.text,
-                raiting=obj.raiting,
+                raiting=obj.rating,
                 parentId=obj.parent_id,
                 lessonId=obj.lesson_id,
                 lessonDate=lesson_date,
                 parentName=parent_name
             ) for obj, parent_name, lesson_date in objects
-        ]
+        ], count
 
     @classmethod
     async def remove_feedback(cls,
@@ -119,4 +122,4 @@ class FeedbackService:
             obj.lesson_id = lesson_id
 
         if raiting:
-            obj.raiting = raiting
+            obj.rating = raiting

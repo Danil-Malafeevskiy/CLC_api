@@ -14,7 +14,7 @@ class Feedback(Base):
 
     id = Column(SmallInteger, primary_key=True)
     text = Column(String, nullable=False)
-    raiting = Column(Float, nullable=False)
+    rating = Column(Float, nullable=False)
     parent_id = Column(
         "parent_id", Integer, ForeignKey("users.id"), nullable=False
     )

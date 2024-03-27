@@ -50,15 +50,15 @@ async def get_feedback(
 @router.post(path="/feedback/list", tags=["Feedback"], name="Feedback.list")
 async def list_feedback(
         filter_: FeedbackListFilter = Body(..., alias="filter"),
-        navigation: BaseListNavigation = Body(...)) -> List[FeedbackResponse]:
+        navigation: BaseListNavigation = Body(...)) -> Dict[str, List[FeedbackResponse] | int]:
 
-    feedback_response = await FeedbackService.list_feedback(
+    feedback_response, count = await FeedbackService.list_feedback(
         filter_,
         navigation,
         async_session()
     )
 
-    return feedback_response
+    return {"data": feedback_response, "count": count}
 
 
 @router.post(path="/feedback/update", tags=["Feedback"], name="Feedback.update")
