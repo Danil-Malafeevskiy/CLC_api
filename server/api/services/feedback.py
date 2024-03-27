@@ -19,11 +19,13 @@ class FeedbackService:
     @classmethod
     async def create_feedback(cls,
                               text: str,
+                              raiting: float,
                               parent_id: int,
                               lesson_id: int,
                               context: Context) -> FeedbackResponse:
         obj = Feedback(
             parent_id=parent_id,
+            raiting=raiting,
             text=text,
             lesson_id=lesson_id
         )
@@ -33,6 +35,7 @@ class FeedbackService:
 
         return FeedbackResponse(
             id=obj.id,
+            raiting=raiting,
             parentId=parent_id,
             text=text,
             lessonId=lesson_id
@@ -51,6 +54,7 @@ class FeedbackService:
         return FeedbackResponse(
             id=obj.id,
             text=obj.text,
+            raiting=obj.raiting,
             parentId=obj.parent_id,
             lessonId=obj.lesson_id,
             lessonDate=lesson_date,
@@ -79,6 +83,7 @@ class FeedbackService:
             FeedbackResponse(
                 id=obj.id,
                 text=obj.text,
+                raiting=obj.raiting,
                 parentId=obj.parent_id,
                 lessonId=obj.lesson_id,
                 lessonDate=lesson_date,
@@ -97,6 +102,7 @@ class FeedbackService:
     async def update_feedback(cls,
                               id_: int,
                               text: Optional[str],
+                              raiting: Optional[float],
                               parent_id: Optional[int],
                               lesson_id: Optional[int],
                               context: Context):
@@ -111,3 +117,6 @@ class FeedbackService:
 
         if lesson_id:
             obj.lesson_id = lesson_id
+
+        if raiting:
+            obj.raiting = raiting

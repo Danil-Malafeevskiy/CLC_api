@@ -22,6 +22,7 @@ async def create_feedback(
 
     feedback_response = await FeedbackService.create_feedback(
         item.text,
+        item.raiting,
         item.parent_id,
         item.lesson_id,
         context
@@ -69,6 +70,7 @@ async def update_feedback(
     await FeedbackService.update_feedback(
         id_,
         item.text,
+        item.raiting,
         item.parent_id,
         item.lesson_id,
         context
