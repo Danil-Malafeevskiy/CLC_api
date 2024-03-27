@@ -73,11 +73,15 @@ class FeedbackService:
 
         query = filter_.apply_to_query(query)
 
-        count = len((await session.execute(query)).all())
+        total_q = (
+            select(func.count())
+            .select_from(query.subquery())
+        )
 
         query = navigation.apply_to_query(query)
 
         objects = (await session.execute(query))
+        count = (await session.execute(total_q)).scalars().first()
 
         await session.commit()
         await session.close()
