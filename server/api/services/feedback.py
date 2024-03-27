@@ -2,6 +2,7 @@ import logging
 from typing import List, Optional
 
 from sqlalchemy import select, delete
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..base_models import BaseListNavigation
 from ..models.feedback import FeedbackResponse, FeedbackListFilter
@@ -60,7 +61,7 @@ class FeedbackService:
     async def list_feedback(cls,
                             filter_: FeedbackListFilter,
                             navigation: BaseListNavigation,
-                            context: Context) -> List[FeedbackResponse]:
+                            session: AsyncSession) -> List[FeedbackResponse]:
         query = ((select(Feedback, User.name, Lesson.date_lesson)
                   .join(User, User.id == Feedback.parent_id))
                  .join(Lesson, Lesson.id == Feedback.lesson_id)
@@ -69,7 +70,10 @@ class FeedbackService:
         query = filter_.apply_to_query(query)
         query = navigation.apply_to_query(query)
 
-        objects = (await context.session.execute(query))
+        objects = (await session.execute(query))
+
+        await session.commit()
+        await session.close()
 
         return [
             FeedbackResponse(
